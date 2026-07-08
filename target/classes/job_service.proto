@@ -1,0 +1,53 @@
+syntax = "proto3";                                //Indicate that the most commonly used version of protocol buffer is being used
+
+option java_multiple_files = true;                //Generate a Java file for each message, service or enum
+option java_package = "grpc.generated.job";       //Package where all the generated files will be saved
+option java_outer_classname = "JobServiceProto";  //name of the outer class that protoc will generate
+
+package job; //Protocol buffers package
+
+//----------------
+//  MESSAGE: Job
+//----------------
+message Job{                    //Job object - Whenever a new job is posted on the app a new Job object will be created
+    int32 jobId = 1;            //Unique numeric job identifier. Example: 001
+    string jobTitle = 2;        //job position's title. Example: Software Tester
+    string companyName =3;      //company's name. Example: Riot Games
+    string jobLocation = 4;     //address where the job is located. Example: Dublin, Ireland
+    string jobDescription =5;   //Description of the job opportunity.
+    double salary =6;           //Job position's annual salary. Example: 60000,00
+}
+
+
+//--------------------------
+//  MESSAGE: AddJobRequest
+//--------------------------
+
+message AddJobRequest{          //Request object that is going to be used for AddJob Rpc
+    Job job =1;                 //Job object that is going to be sent inside of Request object
+}
+
+//----------------------------
+//  MESSAGE: AddJobResponse
+//----------------------------
+message AddJobResponse{         //Response object - This object is going to be sent by the server with the result of trying registering a new job
+    bool success = 1;           //Boolean that will indicate if the operation was either successful or not.
+    string message = 2;         //"Job was added successfully"
+}
+
+//-------------------------------------
+//  MESSAGE: SearchJobPositionRequest
+//-------------------------------------
+message SearchJobPositionRequest{   //Request object that is going to be used for SearchJobPosition Rpc
+    string jobTitle = 1;            //job position's title used for searching. Example: Software Tester
+    string jobLocation = 2;         //Job location address used for searching. Example: Dublin, Ireland
+}
+
+//-------------------------------------
+//        SERVICE: JobService
+//-------------------------------------
+service JobService { //service for Job management that has two rpc
+    rpc AddJob(AddJobRequest) returns (AddJobResponse){}                    //Unary rpc responsible to add a job position.
+
+    rpc SearchJobPosition(SearchJobPositionRequest) returns (stream Job){}  //Service Streaming rpc responsible search job opportunities.
+}
