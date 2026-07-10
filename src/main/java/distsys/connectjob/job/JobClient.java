@@ -52,7 +52,7 @@ public class JobClient {
             addJob(); //To be created in Server Class
             
             //Streaming RPC - to search for a job opportunity
-            //searchJobPosition(); //To be created in Server Class
+            searchJobPosition(); //To be created in Server Class
         } finally{
             //Finishing the connection with the server after the requisition and response
             channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
