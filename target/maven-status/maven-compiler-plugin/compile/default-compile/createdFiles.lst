@@ -28,4 +28,5 @@ grpc\generated\job\Job.class
 grpc\generated\job\JobServiceGrpc$JobServiceBaseDescriptorSupplier.class
 distsys\connectjob\job\JobClient.class
 grpc\generated\job\SearchJobPositionRequestOrBuilder.class
+distsys\connectjob\job\JobServer.class
 grpc\generated\job\SearchJobPositionRequest$Builder.class
