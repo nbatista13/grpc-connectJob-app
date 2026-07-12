@@ -13,9 +13,12 @@ import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
 
 /**
  * JobServer.java
@@ -23,51 +26,87 @@ import java.util.List;
  * Version 1.0
  * 10/07/2026
  */
+
 public class JobServer extends JobServiceImplBase {
-    
+
     //List to store all the jobs
     private final List<Job> jobs = new ArrayList<>();
-    
-    public static void main(String args[]){
-    
+
+    public static void main(String[] args) {
+
         //Creating a instance of the JobServer
         //where we are going to have the methods; 'addJob()' and 'searchJobPosition()'
-        JobServer jobServer = new JobServer();
+        JobServer jobService = new JobServer();
 
-
-        int port = 50051;
+        //Keeping those references outside of 'try' to end them on 'finally'
+        Server grpcServer = null;
+        JmDNS jmdns = null;
+        ServiceInfo serviceInfo = null;
 
         try {
 
             //Here the gRPC is being created
-            Server server = ServerBuilder
-                    .forPort(port)          //Setting the port the server will use
-                    .addService(jobServer)  //JobService implementation
-                    .build()                // built the system
-                    .start();               // responsible for starting the server
+            grpcServer = ServerBuilder
+                    .forPort(JobServiceConfig.SERVICE_PORT) //Setting the port the server will use
+                    .addService(jobService)                 //JobService implementation
+                    .build()                                // built the system
+                    .start();                               // responsible for starting the server
 
-            System.out.println(LocalTime.now() + ": Job server started, listening on " + port);
-            
+            System.out.println(LocalTime.now() + ": Job server started, listening on " + JobServiceConfig.SERVICE_PORT);  
+
+            //Here an instance of jmDNS is being created using the address where the server is located.
+            InetAddress localAddress = InetAddress.getLocalHost();
+            jmdns = JmDNS.create(localAddress);
+
+            //Creating the service description that will be announced.
+            serviceInfo = ServiceInfo.create(JobServiceConfig.SERVICE_TYPE,JobServiceConfig.SERVICE_NAME,JobServiceConfig.SERVICE_PORT,"ConnectJob Job Service");
+
+            //Here the service is being published so the Client can locate it.
+            jmdns.registerService(serviceInfo);
+
+            System.out.println(LocalTime.now() + ": JobService registered with jmDNS as " + JobServiceConfig.SERVICE_NAME +
+                                "\n Address: " + localAddress.getHostAddress());
+
             //Keeps the server on
-            server.awaitTermination();
+            grpcServer.awaitTermination();
 
-            }catch (IOException e){
+        }catch (IOException e){
 
             //If the port is being used or for some reason the server can't start
             //this exception will catch the error.
-                System.out.println("Error when trying to start JobServer.");
-                e.printStackTrace();    
-            } catch (InterruptedException e){
+            System.out.println("Error when trying to start JobServer.");
+            e.printStackTrace();    
+        } catch (InterruptedException e){
 
-                //in case the server is awaiting and we have an issue
-                System.out.println("JobServer was interruped.");
-                e.printStackTrace();
+            //in case the server is awaiting and we have an issue
+            System.out.println("JobServer was interruped.");
+            e.printStackTrace();
 
-                Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();
+        }
+        finally {
+
+            //Once the server is ended the jmDNS announcement will be removed
+            if (jmdns != null && serviceInfo != null) {
+                    jmdns.unregisterService(serviceInfo);
+            }
+
+            if (jmdns != null) {
+                try {
+                    jmdns.close();
+                } catch (IOException e) {
+                    System.out.println("Error closing jmDNS.");
+                    e.printStackTrace();
+                }
+            }
+
+            if (grpcServer != null) {
+                grpcServer.shutdown();
             }
         }
-    
-    //--------------------------
+    }
+
+     //--------------------------
     //  Unary Rpc: Add Job
     //--------------------------
     /*
@@ -81,13 +120,11 @@ public class JobServer extends JobServiceImplBase {
 
         //Here we are getting the object that came inside of the 'AddJobRequest'
         Job job = request.getJob();
-        
-        Job newJob = request.getJob();
 
         boolean jobAlreadyExists = false;
 
         for (Job existingJob : jobs) {
-            if (existingJob.getJobId() == newJob.getJobId()) {
+            if (existingJob.getJobId() == job.getJobId()) {
                 jobAlreadyExists = true;
                 break;
             }
@@ -98,7 +135,7 @@ public class JobServer extends JobServiceImplBase {
         //Verifying if ID is unique
         if (jobAlreadyExists) {
 
-            response = AddJobResponse.newBuilder().setSuccess(false).setMessage("A job position with ID " + newJob.getJobId() + " already exists.").build();
+            response = AddJobResponse.newBuilder().setSuccess(false).setMessage("A job position with ID " + job.getJobId() + " already exists.").build();
 
         }
         else{
@@ -172,5 +209,4 @@ public class JobServer extends JobServiceImplBase {
         //Informing Client that there won't be more other answers
         responseObserver.onCompleted();
     }
-    
 }
