@@ -1,3 +1,4 @@
+distsys\connectjob\gui\ConnectJobGUI.class
 grpc\generated\job\JobOrBuilder.class
 grpc\generated\job\AddJobResponseOrBuilder.class
 grpc\generated\job\JobServiceGrpc$JobServiceFileDescriptorSupplier.class
@@ -8,6 +9,8 @@ grpc\generated\job\AddJobRequest$1.class
 grpc\generated\job\SearchJobPositionRequest.class
 grpc\generated\job\JobServiceGrpc$JobServiceImplBase.class
 grpc\generated\job\JobServiceGrpc$JobServiceMethodDescriptorSupplier.class
+distsys\connectjob\gui\ConnectJobInterface$1.class
+distsys\connectjob\job\JobServiceConfig.class
 grpc\generated\job\AddJobRequest.class
 grpc\generated\job\Job$Builder.class
 grpc\generated\job\JobServiceGrpc.class
@@ -21,9 +24,11 @@ grpc\generated\job\AddJobResponse$Builder.class
 grpc\generated\job\Job$1.class
 grpc\generated\job\JobServiceGrpc$AsyncService.class
 grpc\generated\job\JobServiceGrpc$JobServiceStub.class
+distsys\connectjob\gui\ConnectJobInterface.class
 grpc\generated\job\JobServiceGrpc$3.class
 grpc\generated\job\JobServiceGrpc$JobServiceFutureStub.class
 grpc\generated\job\JobServiceGrpc$1.class
+distsys\connectjob\gui\ConnectJobGUI$1.class
 grpc\generated\job\Job.class
 grpc\generated\job\JobServiceGrpc$JobServiceBaseDescriptorSupplier.class
 distsys\connectjob\job\JobClient.class
