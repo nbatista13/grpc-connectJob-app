@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "grpc.generated.candidate";
+option java_outer_classname = "CandidateServiceProto";
+
+package candidate;
+
+//-------------------------------------
+//  MESSAGE: Candidate
+//-------------------------------------
+message Candidate {             //Candidate object - Whenever a new candidate is created on the app a new candidate object will be created
+  string candidateId = 1;       //Unique numeric candidate identifier. Example: 001
+  string name = 2;              //candidadate name
+  string email = 3;             //candidate email
+}
+
+//-------------------------------------
+//  MESSAGE: Skill
+//-------------------------------------
+message Skill {                 //Skill object - Whenever a new skill is added to a candidate on the app an object 'skill' will be created
+  string candidateId = 1;       //Candidate ID to link the skill to a candidate
+  string skillName = 2;         //name that describe a skill
+}
+
+//-------------------------------------
+//  MESSAGE: SkillSummary
+//-------------------------------------
+message SkillSummary {          //Once all the skills is added and uploaded a 'SkillSummary' obj will be created
+  string candidateId = 1;
+  int32 totalSkills = 2;
+  string message = 3;
+}
+
+//-------------------------------------
+//  MESSAGE: CandidateRequest
+//-------------------------------------
+message CandidateRequest {          //Request object that is going to be used for RegisterCandidate Rpc
+  Candidate candidate = 1;          //Candidate object that is going to be sent inside of Request object
+}
+
+//-------------------------------------
+//  MESSAGE: CandidateResponse
+//-------------------------------------
+message CandidateResponse {         //Response object - This object is going to be sent by the server with the result of trying registering a new candidate
+  bool success = 1;                 //Boolean that will indicate if the operation was either successful or not.
+  string message = 2;               //"Candidate was added successfully"
+}
+
+//-------------------------------------
+//        SERVICE: CandidateService
+//-------------------------------------
+service CandidateService {
+  rpc RegisterCandidate(CandidateRequest) returns (CandidateResponse) {} //unary rpc responsible to create new candidates
+
+  rpc UploadSkills(stream Skill) returns (SkillSummary) {} //Client streaming rpc responsible to upload skills to a candidate
+}
