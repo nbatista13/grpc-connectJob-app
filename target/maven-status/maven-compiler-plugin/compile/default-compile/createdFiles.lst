@@ -1,9 +1,11 @@
 grpc\generated\job\AddJobResponseOrBuilder.class
 grpc\generated\job\JobServiceGrpc$JobServiceFileDescriptorSupplier.class
+distsys\connectjob\candidate\CandidateServer.class
 grpc\generated\candidate\Candidate$Builder.class
 grpc\generated\job\AddJobResponse$1.class
 grpc\generated\candidate\Skill$Builder.class
 grpc\generated\job\AddJobRequest$1.class
+distsys\connectjob\candidate\CandidateServer$1.class
 grpc\generated\job\SearchJobPositionRequest.class
 grpc\generated\candidate\SkillSummary$Builder.class
 grpc\generated\job\JobServiceGrpc$JobServiceMethodDescriptorSupplier.class
@@ -26,6 +28,7 @@ distsys\connectjob\gui\ConnectJobInterface.class
 grpc\generated\candidate\CandidateServiceGrpc$CandidateServiceStub.class
 grpc\generated\job\JobServiceGrpc$1.class
 grpc\generated\job\JobServiceGrpc$JobServiceBaseDescriptorSupplier.class
+distsys\connectjob\candidate\CandidateClient.class
 grpc\generated\job\SearchJobPositionRequestOrBuilder.class
 grpc\generated\candidate\Candidate.class
 distsys\connectjob\job\JobServer.class
@@ -54,8 +57,10 @@ grpc\generated\candidate\Candidate$1.class
 grpc\generated\candidate\CandidateServiceGrpc$CandidateServiceFutureStub.class
 grpc\generated\job\Job$1.class
 grpc\generated\candidate\CandidateResponse$1.class
+distsys\connectjob\candidate\CandidateClient$1.class
 grpc\generated\candidate\CandidateResponse$Builder.class
 grpc\generated\job\JobServiceGrpc$JobServiceStub.class
+distsys\connectjob\candidate\CandidateServiceConfig.class
 grpc\generated\job\JobServiceGrpc$3.class
 grpc\generated\job\JobServiceGrpc$JobServiceFutureStub.class
 grpc\generated\candidate\CandidateRequestOrBuilder.class
