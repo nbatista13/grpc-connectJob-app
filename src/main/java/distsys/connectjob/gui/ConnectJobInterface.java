@@ -9,6 +9,10 @@ import distsys.connectjob.job.JobClient;
 import grpc.generated.job.Job;
 import java.util.List;
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import distsys.connectjob.candidate.CandidateClient;
+import grpc.generated.candidate.CandidateResponse;
+import grpc.generated.candidate.SkillSummary;
 
 /**
  * ConnectJobInterface.java
@@ -19,6 +23,8 @@ import javax.swing.JOptionPane;
 public class ConnectJobInterface extends javax.swing.JFrame {
     
     private JobClient jobClient; //JobClient variable
+    private CandidateClient candidateClient; //CandidateClient variable
+    private final List<String> candidateSkills = new ArrayList<>(); //temporary list
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ConnectJobInterface.class.getName());
 
@@ -28,6 +34,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     public ConnectJobInterface() {
         initComponents();
         connectToJobService();
+        connectToCandidateService();
     }
     
     //Creating connection with the JobService
@@ -42,11 +49,32 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         } catch (Exception e) {
 
             JOptionPane.showMessageDialog(this,"Could not connect to JobService:\n"+ e.getMessage());
-
+            
+            //deactivating all btn if service is not found
             btnAddJob.setEnabled(false);
             btnSearchJobs.setEnabled(false);
         }
     }
+
+    //Creating a connection between CandidateClient and CandidateService
+   private void connectToCandidateService() {
+
+       try {
+
+           candidateClient = new CandidateClient();
+
+           JOptionPane.showMessageDialog(this, "CandidateService connected successfully.");
+
+       } catch (Exception e) {
+
+           JOptionPane.showMessageDialog( this, "Could not connect to CandidateService:\n" + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
+
+           //deactivating all btn if service is not found
+           btnRegisterCandidate.setEnabled(false);
+           btnAddSkill.setEnabled(false);
+           btnUploadSkills.setEnabled(false);
+       }
+   }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -100,7 +128,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         txtSkillName = new javax.swing.JTextField();
         btnAddSkill = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        txtSkills = new javax.swing.JTextArea();
+        txtCandidateSkills = new javax.swing.JTextArea();
         btnUploadSkills = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
@@ -166,9 +194,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(btnAddJob)
-                        .addGap(131, 131, 131))
+                    .addComponent(btnAddJob)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(txtJobTitle)
                         .addComponent(txtCompanyName)
@@ -176,7 +202,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
                         .addComponent(txtJobDescription)
                         .addComponent(txtSalary)
                         .addComponent(txtJobId, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(285, 285, 285))
+                .addGap(300, 300, 300))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -295,6 +321,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         btnRegisterCandidate.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnRegisterCandidate.setForeground(new java.awt.Color(0, 0, 0));
         btnRegisterCandidate.setText("REGISTER CANDIDATE");
+        btnRegisterCandidate.addActionListener(this::btnRegisterCandidateActionPerformed);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -345,18 +372,20 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         btnAddSkill.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnAddSkill.setForeground(new java.awt.Color(0, 0, 0));
         btnAddSkill.setText("ADD SKILL");
+        btnAddSkill.addActionListener(this::btnAddSkillActionPerformed);
 
-        txtSkills.setEditable(false);
-        txtSkills.setColumns(20);
-        txtSkills.setLineWrap(true);
-        txtSkills.setRows(5);
-        txtSkills.setWrapStyleWord(true);
-        jScrollPane2.setViewportView(txtSkills);
+        txtCandidateSkills.setEditable(false);
+        txtCandidateSkills.setColumns(20);
+        txtCandidateSkills.setLineWrap(true);
+        txtCandidateSkills.setRows(5);
+        txtCandidateSkills.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(txtCandidateSkills);
 
         btnUploadSkills.setBackground(new java.awt.Color(0, 204, 51));
         btnUploadSkills.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnUploadSkills.setForeground(new java.awt.Color(0, 0, 0));
         btnUploadSkills.setText("UPLOAD SKILLS");
+        btnUploadSkills.addActionListener(this::btnUploadSkillsActionPerformed);
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -671,14 +700,126 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         if (jobClient != null) {
             jobClient.shutdown();
         }
-        /*if (candidateClient != null) {
+        if (candidateClient != null) {
             candidateClient.shutdown();
         }
 
-        if (interviewClient != null) {
+        /*if (interviewClient != null) {
             interviewClient.shutdown();
         }*/
     }//GEN-LAST:event_formWindowClosing
+
+    private void btnRegisterCandidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterCandidateActionPerformed
+        // TODO add your handling code here:
+        if (candidateClient == null) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "CandidateService is not connected.",
+                "Connection error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+        return;
+        }
+
+        try {
+
+            //calling the unary rpc 'RegisterCandidate
+            CandidateResponse response = candidateClient.registerCandidate(
+                            txtCandidateId.getText(),
+                            txtCandidateName.getText(),
+                            txtCandidateEmail.getText());
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    response.getMessage(),
+                    response.getSuccess() ? "Candidate was registered" : "Candidate was not registered",
+                    response.getSuccess() ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
+
+            //getting the fields empty when candidate's skill is successfully registered
+            if (response.getSuccess()) {
+
+                txtCandidateId.setText("");
+                txtCandidateName.setText("");
+                txtCandidateEmail.setText("");
+
+                txtCandidateId.requestFocus();
+            }
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"The data inserted is invalid",JOptionPane.WARNING_MESSAGE );
+
+        } catch (RuntimeException e) {
+
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Remote service error", JOptionPane.ERROR_MESSAGE );}
+        
+    }//GEN-LAST:event_btnRegisterCandidateActionPerformed
+
+    private void btnAddSkillActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSkillActionPerformed
+        // TODO add your handling code here:
+         String skillName = txtSkillName.getText().trim();
+
+        //Making sure that no empty skill will be submitted
+        if (skillName.isBlank()) {
+
+            JOptionPane.showMessageDialog(this,"Please enter a skill.","The skill is invalid",JOptionPane.WARNING_MESSAGE);
+
+            return;
+        }
+
+        //Adding the skill to a temporary list of the interface
+        candidateSkills.add(skillName);
+
+        //Just displaying the skill on the text area
+        txtCandidateSkills.append(
+                skillName + "\n"
+        );
+
+
+        //cleaning the field for next skill
+        txtSkillName.setText("");
+        txtSkillName.requestFocus();
+    }//GEN-LAST:event_btnAddSkillActionPerformed
+
+    private void btnUploadSkillsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadSkillsActionPerformed
+        // TODO add your handling code here:
+        if (candidateClient == null) {
+
+            JOptionPane.showMessageDialog( this, "CandidateService isn't connected.", "Connection error", JOptionPane.ERROR_MESSAGE);
+
+            return;
+        }
+
+        try {
+
+            //Calling for UploadSkill
+            SkillSummary summary = candidateClient.uploadSkills( txtSkillCandidateId.getText(), candidateSkills);
+
+            JOptionPane.showMessageDialog(this, summary.getMessage() + 
+                    "\nCandidate ID: " + summary.getCandidateId() + 
+                    "\nTotal skills: " + summary.getTotalSkills(), "Skill was upload result",
+                    JOptionPane.INFORMATION_MESSAGE );
+
+            //Emptying the field if everything goes well
+            candidateSkills.clear();
+
+            txtCandidateSkills.setText("");
+            txtSkillName.setText("");
+            txtSkillCandidateId.setText("");
+
+            txtSkillCandidateId.requestFocus();
+
+        } catch (IllegalArgumentException e) {
+
+            JOptionPane.showMessageDialog( this, e.getMessage(), "The data inserted is invalid", JOptionPane.WARNING_MESSAGE);
+
+        } catch (RuntimeException e) {
+
+            JOptionPane.showMessageDialog( this, e.getMessage(), "Error with the remote service.", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnUploadSkillsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -753,6 +894,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     private javax.swing.JTextField txtCandidateEmail;
     private javax.swing.JTextField txtCandidateId;
     private javax.swing.JTextField txtCandidateName;
+    private javax.swing.JTextArea txtCandidateSkills;
     private javax.swing.JTextField txtChatMessage;
     private javax.swing.JTextArea txtChatMessages;
     private javax.swing.JTextField txtChatSender;
@@ -772,6 +914,5 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     private javax.swing.JTextField txtSearchJobTitle;
     private javax.swing.JTextField txtSkillCandidateId;
     private javax.swing.JTextField txtSkillName;
-    private javax.swing.JTextArea txtSkills;
     // End of variables declaration//GEN-END:variables
 }

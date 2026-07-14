@@ -168,25 +168,6 @@ public class CandidateServer extends CandidateServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    /*
-     * ==========================================================
-     * CLIENT STREAMING RPC: UploadSkills
-     * ==========================================================
-     *
-     * Comunicação:
-     *
-     * várias mensagens Skill -> 1 SkillSummary
-     */
-
-    /**
-     * Recebe várias skills enviadas pelo cliente.
-     *
-     * Diferente de Unary RPC, este método não recebe diretamente
-     * um objeto Skill como parâmetro.
-     *
-     * Ele devolve um StreamObserver<Skill>, que será usado
-     * para receber cada mensagem enviada pelo cliente.
-     */
     
     //--------------------------------------------
     // Client Streaming Rpc - UploadSkills
