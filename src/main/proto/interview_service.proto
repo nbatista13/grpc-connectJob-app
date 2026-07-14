@@ -1,0 +1,57 @@
+syntax = "proto3";                                      //Indicate that the most commonly used version of protocol buffer is being used
+
+option java_multiple_files = true;                      //Generate a Java file for each message, service or enum
+option java_package = "grpc.generated.interview";       //Package where all the generated files will be saved
+option java_outer_classname = "InterviewServiceProto";  //name of the outer class that protoc will generate
+
+package interview;                       //Protocol buffers package
+
+//--------------------------------
+// MESSAGE: Interview
+//--------------------------------
+message Interview {             //Interview object - Whenever a new Interview is created on the app a new Interview object will be created
+
+    string interviewId = 1;     //Unique numeric Interview identifier. Example: 001
+    string candidateId = 2;     //Unique numeric candidate identifier that will be in the interview
+    int32 jobId = 3;            //Unique numeric job identifier. Example: 001, related to the interview
+    string interviewDate = 4;   //interview's date. i.e.: 20/07/2026
+    string interviewTime = 5;   //interview's time. i.e: 10:30
+}
+
+//--------------------------------------
+// MESSAGE: InterviewRequest
+//--------------------------------------
+message InterviewRequest {          //Request object that is going to be used for ScheduleInterview Rpc
+
+    Interview interview = 1;        //Interview object that is going to be sent inside of Request object
+}
+
+//---------------------------------------
+// MESSAGE: InterviewResponse
+//---------------------------------------
+message InterviewResponse {
+
+    bool success = 1;           //Boolean that will indicate if the operation was either successful or not.
+    string message = 2;             //"interview was added successfully"
+}
+
+//--------------------------------
+// MESSAGE: InterviewMessage
+//--------------------------------
+message InterviewMessage {
+
+    string interviewId = 1; //Unique numeric Interview identifier. Example: 001
+    string sender = 2;      //name of the person who sent the message
+    string message = 3;     // message sent
+    string timestamp = 4;   //time it was sent
+}
+
+//--------------------------------
+// SERVICE: InterviewService
+//--------------------------------
+service InterviewService {  //service for interview management that has two rpc
+
+    rpc ScheduleInterview(InterviewRequest) returns (InterviewResponse) {}      //Unary rpc responsible to schedule a interview.
+
+    rpc InterviewChat(stream InterviewMessage) returns (stream InterviewMessage) {}     //Bidirectional Streaming rpc responsible exchange messages.
+}
