@@ -6,6 +6,7 @@ C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\src\main\java\dists
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\src\main\java\distsys\connectjob\job\JobServer.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\src\main\java\distsys\connectjob\job\JobServiceConfig.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\grpc-java\grpc\generated\candidate\CandidateServiceGrpc.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\grpc-java\grpc\generated\interview\InterviewServiceGrpc.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\grpc-java\grpc\generated\job\JobServiceGrpc.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\candidate\Candidate.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\candidate\CandidateOrBuilder.java
@@ -18,6 +19,15 @@ C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-so
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\candidate\SkillOrBuilder.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\candidate\SkillSummary.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\candidate\SkillSummaryOrBuilder.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\Interview.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewMessage.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewMessageOrBuilder.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewOrBuilder.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewRequest.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewRequestOrBuilder.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewResponse.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewResponseOrBuilder.java
+C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\interview\InterviewServiceProto.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\job\AddJobRequest.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\job\AddJobRequestOrBuilder.java
 C:\Projects\JAVA_projects\NCI\Distributed Systems\ConnectJob\target\generated-sources\protobuf\java\grpc\generated\job\AddJobResponse.java
