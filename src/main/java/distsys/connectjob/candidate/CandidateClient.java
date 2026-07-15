@@ -90,7 +90,8 @@ public class CandidateClient {
 
             //Searching the service for about 5 seconds
             ServiceInfo serviceInfo = jmdns.getServiceInfo(CandidateServiceConfig.SERVICE_TYPE,CandidateServiceConfig.SERVICE_NAME,5000);
-
+            
+            //if the service isn't found, 'null' is going to be returned with a message
             if (serviceInfo == null) {
 
                 throw new IllegalStateException("CandidateService was not found. Please, verify if CandidateServer is ON and registered.");
