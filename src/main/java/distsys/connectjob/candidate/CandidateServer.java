@@ -90,11 +90,12 @@ public class CandidateServer extends CandidateServiceImplBase {
 
         } finally {
 
-            //Once the server is ended the jmDNS announcement will be removed
+            //Before the server is ended the jmDNS announcement is be removed
             if (jmdns != null && serviceInfo != null) {
                 jmdns.unregisterService(serviceInfo);
             }
-
+            
+            //Closing jmDNS
             if (jmdns != null) {
 
                 try {
@@ -107,6 +108,7 @@ public class CandidateServer extends CandidateServiceImplBase {
                 }
             }
 
+            //Closing server
             if (grpcServer != null) {
                 grpcServer.shutdown();
             }
@@ -127,7 +129,7 @@ public class CandidateServer extends CandidateServiceImplBase {
         //Here we are getting the object that came inside of the 'CandidateRequest'
         Candidate candidate = request.getCandidate();
 
-        //Verifying if a candidate already exists
+        //Verifying if a candidate with the same ID already exists
         boolean candidateAlreadyExists = false;
 
         for (Candidate existingCandidate : candidates) {
@@ -161,7 +163,7 @@ public class CandidateServer extends CandidateServiceImplBase {
                     .build();
         }
 
-        //Calling 'onNext()' to send the response obj to the client
+        //Calling 'onNext()' to send the response obj to the client(only one since is a unary rpc)
         responseObserver.onNext(response);
 
         //Informing Client that there won't be more other answers
