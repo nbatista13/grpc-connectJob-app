@@ -11,8 +11,12 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import distsys.connectjob.candidate.CandidateClient;
+import distsys.connectjob.interview.InterviewClient;
 import grpc.generated.candidate.CandidateResponse;
 import grpc.generated.candidate.SkillSummary;
+import grpc.generated.interview.InterviewMessage;
+import grpc.generated.interview.InterviewResponse;
+import javax.swing.SwingUtilities;
 
 /**
  * ConnectJobInterface.java
@@ -24,6 +28,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     
     private JobClient jobClient; //JobClient variable
     private CandidateClient candidateClient; //CandidateClient variable
+    private InterviewClient interviewClient; //InterviewClient variable
     private final List<String> candidateSkills = new ArrayList<>(); //temporary list
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ConnectJobInterface.class.getName());
@@ -35,6 +40,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         initComponents();
         connectToJobService();
         connectToCandidateService();
+        connectToInterviewService();
     }
     
     //Creating connection with the JobService
@@ -57,15 +63,15 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     }
 
     //Creating a connection between CandidateClient and CandidateService
-   private void connectToCandidateService() {
+    private void connectToCandidateService() {
 
-       try {
+        try {
 
            candidateClient = new CandidateClient();
 
            JOptionPane.showMessageDialog(this, "CandidateService connected successfully.");
 
-       } catch (Exception e) {
+        } catch (Exception e) {
 
            JOptionPane.showMessageDialog( this, "Could not connect to CandidateService:\n" + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
 
@@ -73,8 +79,44 @@ public class ConnectJobInterface extends javax.swing.JFrame {
            btnRegisterCandidate.setEnabled(false);
            btnAddSkill.setEnabled(false);
            btnUploadSkills.setEnabled(false);
-       }
-   }
+        }
+    }
+    
+    //Creating a connection between InterviewClient and InterviewService
+    private void connectToInterviewService(){
+            
+        try {
+
+            interviewClient = new InterviewClient();
+
+            JOptionPane.showMessageDialog(this,"InterviewService was connected successfully.","Service discovery",JOptionPane.INFORMATION_MESSAGE);
+
+            //Bidirectional Streaming rpc is being inicialized
+            //everytime a message is sent this code is going to be executed
+            interviewClient.startChat(message -> {
+
+                
+                //Since the gRPC responses can be received in a different thread
+                // 'SwingUtilities.invokeLater' is going to make sure that the interface update happens in the correct thread
+                SwingUtilities.invokeLater(() -> {
+
+                    txtChatMessages.append("[" + message.getTimestamp() + "] " + message.getSender() + ": " + message.getMessage() + "\n" );
+
+                    //Moving the caret to the end of the text area
+                    txtChatMessages.setCaretPosition(txtChatMessages.getDocument().getLength());
+                });
+            });
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog( this,"Could not connect to InterviewService:\n" + e.getMessage(),"Connection error",JOptionPane.ERROR_MESSAGE);
+
+            //Deactivating the buttons if the connection was not established
+            btnScheduleInterview.setEnabled(false);
+            btnSendMessage.setEnabled(false);
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -152,6 +194,8 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         btnSendMessage = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtChatMessages = new javax.swing.JTextArea();
+        jLabel21 = new javax.swing.JLabel();
+        txtChatInterviewId = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ConnectJob");
@@ -473,6 +517,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         btnScheduleInterview.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnScheduleInterview.setForeground(new java.awt.Color(0, 0, 0));
         btnScheduleInterview.setText("SCHEDULE INTERVIEW");
+        btnScheduleInterview.addActionListener(this::btnScheduleInterviewActionPerformed);
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -535,6 +580,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         btnSendMessage.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnSendMessage.setForeground(new java.awt.Color(0, 0, 0));
         btnSendMessage.setText("SEND");
+        btnSendMessage.addActionListener(this::btnSendMessageActionPerformed);
 
         txtChatMessages.setEditable(false);
         txtChatMessages.setColumns(20);
@@ -543,30 +589,38 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         txtChatMessages.setWrapStyleWord(true);
         jScrollPane3.setViewportView(txtChatMessages);
 
+        jLabel21.setText("Interview ID ");
+
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addGap(288, 288, 288)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane3)
-                    .addGroup(jPanel10Layout.createSequentialGroup()
-                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel19)
-                            .addComponent(jLabel20))
-                        .addGap(48, 48, 48)
-                        .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnSendMessage)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel21)
+                    .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
+                        .addGroup(jPanel10Layout.createSequentialGroup()
+                            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel19)
+                                .addComponent(jLabel20))
+                            .addGap(48, 48, 48)
                             .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnSendMessage)
                                 .addComponent(txtChatSender)
-                                .addComponent(txtChatMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtChatMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                                .addComponent(txtChatInterviewId)))))
                 .addContainerGap(295, Short.MAX_VALUE))
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
-                .addGap(88, 88, 88)
+                .addGap(48, 48, 48)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel21)
+                    .addComponent(txtChatInterviewId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
                     .addComponent(txtChatSender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -697,30 +751,28 @@ public class ConnectJobInterface extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         // TODO add your handling code here:
+        //closing connection with JobService
         if (jobClient != null) {
             jobClient.shutdown();
         }
+        //closing connection with CandidateService
         if (candidateClient != null) {
             candidateClient.shutdown();
         }
-
-        /*if (interviewClient != null) {
+        //closing connection with InterviewService
+        if (interviewClient != null) {
             interviewClient.shutdown();
-        }*/
+        }
     }//GEN-LAST:event_formWindowClosing
 
     private void btnRegisterCandidateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterCandidateActionPerformed
         // TODO add your handling code here:
         if (candidateClient == null) {
 
-        JOptionPane.showMessageDialog(
-                this,
-                "CandidateService is not connected.",
-                "Connection error",
-                JOptionPane.ERROR_MESSAGE
-        );
+            JOptionPane.showMessageDialog(this,"CandidateService is not connected.","Connection error",
+                    JOptionPane.ERROR_MESSAGE);
 
-        return;
+            return;
         }
 
         try {
@@ -731,9 +783,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
                             txtCandidateName.getText(),
                             txtCandidateEmail.getText());
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    response.getMessage(),
+            JOptionPane.showMessageDialog(this, response.getMessage(),
                     response.getSuccess() ? "Candidate was registered" : "Candidate was not registered",
                     response.getSuccess() ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
 
@@ -821,6 +871,105 @@ public class ConnectJobInterface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnUploadSkillsActionPerformed
 
+    private void btnScheduleInterviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnScheduleInterviewActionPerformed
+        // TODO add your handling code here:
+
+        //Verifying if the service is connected
+        if (interviewClient == null) {
+
+            JOptionPane.showMessageDialog(this,"InterviewService is not connected.","Connection error",JOptionPane.ERROR_MESSAGE);
+
+           return;
+        }
+
+        try {
+
+            //Since jobId is a integer, it's needed to convert the text to a integer
+            int jobId = Integer.parseInt(txtInterviewJobId.getText().trim());
+
+            //Calling ScheduleInterview(unary rpc)
+            InterviewResponse response = interviewClient.scheduleInterview(
+                            txtInterviewId.getText(),
+                            txtInterviewCandidateId.getText(),jobId,
+                            txtInterviewDate.getText(),
+                            txtInterviewTime.getText());
+
+            //Displaying the msg receveid from server's side
+            JOptionPane.showMessageDialog(this,response.getMessage(),response.getSuccess()? "Interview scheduled" : "Interview not scheduled",
+                    response.getSuccess()? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
+
+           //Emptying the fields when the operation is concluded.
+            if (response.getSuccess()) {
+
+               clearInterviewFields();
+           }
+
+       } catch (NumberFormatException e) {
+
+           JOptionPane.showMessageDialog( this, "Job ID must be a valid integer.", "Invalid Job ID", JOptionPane.WARNING_MESSAGE);
+
+       } catch (IllegalArgumentException e) {
+
+           JOptionPane.showMessageDialog(this,e.getMessage(),"Invalid data", JOptionPane.WARNING_MESSAGE);
+
+       } catch (RuntimeException e) {
+
+           JOptionPane.showMessageDialog(this,e.getMessage(),"Remote service error",JOptionPane.ERROR_MESSAGE);
+       }
+    }//GEN-LAST:event_btnScheduleInterviewActionPerformed
+
+    private void btnSendMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendMessageActionPerformed
+        // TODO add your handling code here:
+        if (interviewClient == null) {
+
+            JOptionPane.showMessageDialog(this, "InterviewService is not connected.", "Connection error",JOptionPane.ERROR_MESSAGE);
+
+            return;
+        }
+
+        try {
+
+            String interviewId = txtChatInterviewId.getText().trim();
+
+            String sender = txtChatSender.getText().trim();
+
+            String messageText = txtChatMessage.getText().trim();
+
+            //Calling the method responsible to send a message through the bidirectional streaming
+            interviewClient.sendChatMessage(interviewId, sender,messageText);
+
+            //Displaying user's msg on inside the text area
+            txtChatMessages.append("[You] " + sender + ": " + messageText + "\n");
+
+            //Cleaning msg field only, since interview id and sender will be problably be used again to continue
+            //the chat.
+            txtChatMessage.setText("");
+            txtChatMessage.requestFocus();
+
+            txtChatMessages.setCaretPosition(txtChatMessages.getDocument().getLength());
+
+        } catch (IllegalArgumentException
+                | IllegalStateException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Invalid chat message",JOptionPane.WARNING_MESSAGE);
+
+        } catch (RuntimeException e) {
+
+            JOptionPane.showMessageDialog(this,e.getMessage(),"Chat error",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnSendMessageActionPerformed
+    
+    //method to clean the fields when the operation of scheduling a interview is completed
+    private void clearInterviewFields() {
+
+        txtInterviewId.setText("");
+        txtInterviewCandidateId.setText("");
+        txtInterviewJobId.setText("");
+        txtInterviewDate.setText("");
+        txtInterviewTime.setText("");
+
+        txtInterviewId.requestFocus();
+    }
     /**
      * @param args the command line arguments
      */
@@ -867,6 +1016,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -895,6 +1045,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
     private javax.swing.JTextField txtCandidateId;
     private javax.swing.JTextField txtCandidateName;
     private javax.swing.JTextArea txtCandidateSkills;
+    private javax.swing.JTextField txtChatInterviewId;
     private javax.swing.JTextField txtChatMessage;
     private javax.swing.JTextArea txtChatMessages;
     private javax.swing.JTextField txtChatSender;

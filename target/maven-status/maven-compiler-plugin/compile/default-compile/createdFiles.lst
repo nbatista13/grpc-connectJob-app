@@ -1,4 +1,5 @@
 grpc\generated\interview\InterviewServiceGrpc$InterviewServiceImplBase.class
+distsys\connectjob\interview\InterviewServer$1.class
 grpc\generated\candidate\Skill$Builder.class
 grpc\generated\interview\Interview$Builder.class
 grpc\generated\candidate\SkillSummary$Builder.class
@@ -33,10 +34,12 @@ grpc\generated\candidate\CandidateServiceGrpc$CandidateServiceBaseDescriptorSupp
 grpc\generated\candidate\CandidateResponseOrBuilder.class
 grpc\generated\job\JobServiceGrpc$2.class
 grpc\generated\candidate\CandidateServiceProto.class
+distsys\connectjob\interview\InterviewClient.class
 grpc\generated\job\JobServiceGrpc$JobServiceBlockingStub.class
 grpc\generated\job\JobServiceProto.class
 grpc\generated\candidate\CandidateServiceGrpc$CandidateServiceFutureStub.class
 grpc\generated\job\Job$1.class
+distsys\connectjob\interview\InterviewClient$1.class
 grpc\generated\candidate\CandidateResponse$Builder.class
 grpc\generated\interview\InterviewServiceGrpc$InterviewServiceBaseDescriptorSupplier.class
 grpc\generated\job\JobServiceGrpc$JobServiceStub.class
@@ -89,7 +92,9 @@ grpc\generated\interview\InterviewServiceGrpc$InterviewServiceFileDescriptorSupp
 grpc\generated\job\AddJobResponse.class
 grpc\generated\candidate\CandidateServiceGrpc$2.class
 grpc\generated\candidate\Candidate$1.class
+distsys\connectjob\interview\InterviewServer.class
 grpc\generated\candidate\CandidateResponse$1.class
+distsys\connectjob\interview\InterviewServiceConfig.class
 distsys\connectjob\candidate\CandidateClient$1.class
 grpc\generated\job\JobServiceGrpc$JobServiceFutureStub.class
 grpc\generated\candidate\CandidateRequestOrBuilder.class
