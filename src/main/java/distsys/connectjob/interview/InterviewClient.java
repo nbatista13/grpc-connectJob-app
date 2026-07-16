@@ -241,7 +241,7 @@ public class InterviewClient {
     }
     
     //method responsible of doing some data validations on data coming from scheduleInterview method
-    private void validateInterviewData(String interviewId,String candidateId, int jobId,String interviewDate, String interviewTime){
+    private void validateInterviewData(String interviewId,String candidateId, int jobId, String interviewDate, String interviewTime){
         if (interviewId == null || interviewId.isBlank()) {
 
             throw new IllegalArgumentException("Interview ID must be informed.");
