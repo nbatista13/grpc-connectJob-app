@@ -133,11 +133,7 @@ public class InterviewServer extends InterviewServiceImplBase {
 
         for (Interview existingInterview : interviews) {
 
-            if (existingInterview
-                    .getInterviewId()
-                    .equalsIgnoreCase(
-                            interview.getInterviewId()
-                    )) {
+            if (existingInterview.getInterviewId().equalsIgnoreCase(interview.getInterviewId())) {
 
                 interviewAlreadyExists = true;
                 break;
