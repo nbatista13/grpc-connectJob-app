@@ -134,11 +134,7 @@ public class CandidateServer extends CandidateServiceImplBase {
 
         for (Candidate existingCandidate : candidates) {
 
-            if (existingCandidate
-                    .getCandidateId()
-                    .equalsIgnoreCase(
-                            candidate.getCandidateId()
-                    )) {
+            if (existingCandidate.getCandidateId().equalsIgnoreCase(candidate.getCandidateId())) {
 
                 candidateAlreadyExists = true;
                 break;
@@ -210,11 +206,7 @@ public class CandidateServer extends CandidateServiceImplBase {
             @Override
             public void onError(Throwable error) {
 
-                System.out.println(
-                        LocalTime.now()
-                        + ": error receiving skills - "
-                        + error.getMessage()
-                );
+                System.out.println(LocalTime.now() + ": error receiving skills - " + error.getMessage());
             }
 
             //method that is going to be called when the Client calls 'requestObserver.onCompleted()'

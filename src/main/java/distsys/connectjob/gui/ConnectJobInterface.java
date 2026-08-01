@@ -54,7 +54,7 @@ public class ConnectJobInterface extends javax.swing.JFrame {
 
         } catch (Exception e) {
 
-            JOptionPane.showMessageDialog(this,"Could not connect to JobService:\n"+ e.getMessage());
+            JOptionPane.showMessageDialog( this, "Could not connect to JobService:\n" + e.getMessage(), "Connection error", JOptionPane.ERROR_MESSAGE);
             
             //deactivating all btn if service is not found
             btnAddJob.setEnabled(false);
